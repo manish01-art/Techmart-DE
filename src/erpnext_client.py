@@ -33,3 +33,41 @@ class ERPNextClient:
         response.raise_for_status()
 
         return response.json()
+    
+    def exists(self, endpoint, filters):
+
+        params = {
+            "filters": str(filters).replace("'", '"'),
+            "fields": '["name"]',
+            "limit_page_length": 1,
+        }
+
+        result = self.get(
+            endpoint,
+            params=params
+        )
+
+        return len(result.get("data", [])) > 0
+
+    def post(self, endpoint, data):
+
+        url = f"{self.base_url}/api/resource/{endpoint}"
+
+        headers = {
+            **self.headers,
+            "Expect": "",
+        }
+
+        response = requests.post(
+            url,
+            headers=headers,
+            json=data,
+            timeout=30,
+        )
+
+        print("STATUS:", response.status_code)
+        print("RESPONSE:", response.text)
+
+        response.raise_for_status()
+
+        return response.json()
