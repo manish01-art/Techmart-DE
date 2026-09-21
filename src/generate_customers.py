@@ -1,6 +1,13 @@
+
 from faker import Faker
 
+
 from src.erpnext_client import ERPNextClient
+
+
+
+from src.logger import get_logger
+logger = get_logger(__name__)
 
 
 fake = Faker()
@@ -34,9 +41,15 @@ for _ in range(CUSTOMER_COUNT):
     }
 
     if client.exists("Customer", filters):
-        print(f"Skipped existing customer: {customer_name}")
+        logger.info(
+       "Skipped existing customer: %s",
+      customer_name
+     )
         continue
 
     result = client.post("Customer", customer_data)
 
-    print(f"Created customer: {result['data']['name']}")
+    logger.info(
+    "Created customer: %s",
+    result["data"]["name"]
+     )

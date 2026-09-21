@@ -1,11 +1,14 @@
 import requests
 
+
 from src.config import (
     ERPNEXT_URL,
     ERPNEXT_API_KEY,
     ERPNEXT_API_SECRET,
 )
+from src.logger import get_logger
 
+logger = get_logger(__name__)
 
 class ERPNextClient:
 
@@ -23,16 +26,27 @@ class ERPNextClient:
 
         url = f"{self.base_url}/api/resource/{endpoint}"
 
-        response = requests.get(
-            url,
-            headers=self.headers,
-            params=params,
-            timeout=30,
-        )
+        try:
+            response = requests.get(
+                url,
+                headers=self.headers,
+                params=params,
+                timeout=30,
+            )
 
-        response.raise_for_status()
+            response.raise_for_status()
 
-        return response.json()
+            return response.json()
+
+        except requests.RequestException as exc:
+
+            logger.error(
+                "GET request failed | endpoint=%s | error=%s",
+                endpoint,
+                exc
+            )
+
+            raise
     
     def exists(self, endpoint, filters):
 
@@ -58,16 +72,29 @@ class ERPNextClient:
             "Expect": "",
         }
 
-        response = requests.post(
-            url,
-            headers=headers,
-            json=data,
-            timeout=30,
+        logger.info(
+            "POST request to ERPNext endpoint=%s",
+            endpoint
         )
 
-        print("STATUS:", response.status_code)
-        print("RESPONSE:", response.text)
+        try:
+            response = requests.post(
+                url,
+                headers=headers,
+                json=data,
+                timeout=30,
+            )
 
-        response.raise_for_status()
+            response.raise_for_status()
 
-        return response.json()
+            return response.json()
+
+        except requests.RequestException as exc:
+
+            logger.error(
+                "POST request failed | endpoint=%s | error=%s",
+                endpoint,
+                exc
+            )
+
+            raise
