@@ -47,6 +47,37 @@ class ERPNextClient:
             )
 
             raise
+
+    def get_all(self, endpoint, params=None, page_size=100):
+
+        params = params.copy() if params else {}
+
+        all_records = []
+        offset = 0
+
+        while True:
+
+            page_params = {
+                **params,
+                "limit_start": offset,
+                "limit_page_length": page_size,
+            }
+
+            result = self.get(
+                endpoint,
+                params=page_params
+            )
+
+            records = result.get("data", [])
+
+            all_records.extend(records)
+
+            if len(records) < page_size:
+                break
+
+            offset += page_size
+
+        return all_records
     
     def exists(self, endpoint, filters):
 
