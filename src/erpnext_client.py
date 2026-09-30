@@ -129,3 +129,35 @@ class ERPNextClient:
             )
 
             raise
+
+    def put(self, endpoint, name, data):
+
+        url = f"{self.base_url}/api/resource/{endpoint}/{name}"
+
+        headers = {
+        **self.headers,
+        "Expect": "",
+    }
+
+        try:
+            response = requests.put(
+                url,
+                headers=headers,
+                json=data,
+                timeout=30,
+            )
+
+            response.raise_for_status()
+
+            return response.json()
+
+        except requests.RequestException as exc:
+
+            logger.error(
+                "PUT request failed | endpoint=%s | name=%s | error=%s",
+                endpoint,
+                name,
+                exc
+            )
+
+            raise

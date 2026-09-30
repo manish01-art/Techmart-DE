@@ -1,24 +1,20 @@
-
 from faker import Faker
 
-
 from src.erpnext_client import ERPNextClient
-
-
-
 from src.logger import get_logger
-logger = get_logger(__name__)
 
+
+logger = get_logger(__name__)
 
 fake = Faker()
 Faker.seed(42)
 
 client = ERPNextClient()
 
-CUSTOMER_COUNT = 10
+CUSTOMER_COUNT = 100
 
 
-for _ in range(CUSTOMER_COUNT):
+for i in range(1, CUSTOMER_COUNT + 1):
 
     customer_type = fake.random_element(
         elements=["Individual", "Company"]
@@ -41,15 +37,26 @@ for _ in range(CUSTOMER_COUNT):
     }
 
     if client.exists("Customer", filters):
+
         logger.info(
-       "Skipped existing customer: %s",
-      customer_name
-     )
+            "Skipped existing customer: %s",
+            customer_name
+        )
+
         continue
 
-    result = client.post("Customer", customer_data)
+    result = client.post(
+        "Customer",
+        customer_data
+    )
 
     logger.info(
-    "Created customer: %s",
-    result["data"]["name"]
-     )
+        "Created customer: %s",
+        result["data"]["name"]
+    )
+
+
+logger.info(
+    "Customer generation completed | requested=%s",
+    CUSTOMER_COUNT
+)
