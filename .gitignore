@@ -4,6 +4,10 @@ __pycache__/
 *.pyc
 
 data/raw/
+data/generated/
 data/processed/
+data/source_batches/
+data/processed/
+data/state/
 
 *.log
